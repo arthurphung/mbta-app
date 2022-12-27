@@ -1,0 +1,9 @@
+.items-body-content {
+    padding: 10px 0px 10px 10px;
+    display: grid;
+    grid-template-columns: [col1-start] 10fr [col1-end col2-start] 1fr;
+    grid-column-gap: 10px;
+    border: 1px black solid;
+    margin-bottom: 10px;
+    cursor: pointer; 
+}

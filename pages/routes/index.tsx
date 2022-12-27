@@ -1,6 +1,7 @@
 import { GetStaticProps } from 'next';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import GroupedSelectMenu from '../../components/GroupedSelectMenu';
 
 const { CONNECTION_STRING } = process.env;
 
@@ -46,46 +47,55 @@ interface LineData {
     type: string
 }
 
-enum RouteIndexes {
-    RouteType,
-    Routes
+interface RoutesMap {
+    [key: string]: any
 }
 
-export default function Routes(props: Routes) {
-    const [routeTypes, setRouteTypes] = useState<string[]>([]);
-    const [routes, setRoutes] = useState<string[]>([]);
+type RoutesObj = {
+    id: string,
+    list: Array<string>
+};
+
+
+const Routes = (props: Routes) => {
+    const [routes, setRoutes] = useState<Array<RoutesObj>>([]);
     console.log(props);
     const { data } = props;
 
     useEffect(() => {
-        type RoutesObj = {
-            [key: string]: any
-        };
-    
-        const routesObj: RoutesObj = {};
+        const routesMap: RoutesMap = {};
     
         for (const route of data) {
             const routeType = route.attributes.description;
     
-            if (routeType in routesObj) {
-                routesObj[`${routeType}`].push(route.attributes.long_name);
+            if (routeType in routesMap) {
+                routesMap[`${routeType}`].push(route.attributes.long_name);
             } else {
-                routesObj[`${routeType}`] = [];
+                routesMap[`${routeType}`] = [];
             }
         }
+
+        const routesList: Array<RoutesObj> = [];
+
+        for (const key in routesMap) {
+            const routesListObj: RoutesObj = {
+                id: '',
+                list: []
+            };
+            routesListObj.id = key;
+            routesListObj.list = routesMap[key];
+            routesList.push(routesListObj);
+        }
     
-        setRouteTypes(Object.keys(routesObj));
-        setRoutes(Object.values(routesObj));
+        setRoutes(routesList);
     }, [])
 
     return (
         <div>
             <ul>
-                {routeTypes.map((el, idx) => {
-                    return (
-                        <li key={idx}>{el}</li>
-                    );
-                })}
+                <GroupedSelectMenu
+                    data={routes}
+                />
             </ul>
         </div>
     );
@@ -99,3 +109,5 @@ export const getStaticProps: GetStaticProps = async (context) => {
         props: routesData
     };
 }
+
+export default Routes;
