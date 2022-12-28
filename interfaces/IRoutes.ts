@@ -1,18 +1,16 @@
-  interface Routes {
-    data: Array<Route>
-  }
+export interface IRoutes {
+    data: Array<IRoute>
+};
 
-  export default Routes;
-  
-  interface Route {
+export interface IRoute {
     attributes: Attributes,
     id: string,
     links: Links,
     relationships: Relationships,
     type: string
-  }
+};
 
-  interface Attributes {
+interface Attributes {
     color: string,
     description: string,
     direction_destinations: Array<string>,
@@ -23,31 +21,21 @@
     sort_order: number,
     text_color: string,
     type: number
-  }
-  
-  interface Links {
+};
+
+interface Links {
     self: string
-  }
-  
-  interface Relationships {
+};
+
+interface Relationships {
     line: Line
-  }
-  
-  interface Line {
+};
+
+interface Line {
     data: LineData
-  }
-  
-  interface LineData {
+};
+
+interface LineData {
     id: string,
     type: string
-  }
-  
-  interface RoutesMap {
-    [key: string]: any
-  }
-  
-  type RoutesObj = {
-    id: string,
-    list: Array<Route>
-  };
-  
+};

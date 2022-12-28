@@ -1,99 +1,130 @@
 import Head from 'next/head';
 import { GetStaticProps } from 'next';
-import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import React, { useState, useEffect } from 'react';
 import Card from '../components/Card';
+import { IRoutes, IRoute } from '../interfaces/IRoutes';
+import { IStops, IStop } from '../interfaces/IStops';
 import styles from '../styles/Home.module.css';
 
-const { CONNECTION_STRING } = process.env;
-
-interface Routes {
-  data: Array<Route>
-}
-
-interface Route {
-  attributes: Attributes,
-  id: string,
-  links: Links,
-  relationships: Relationships,
-  type: string
-}
-
-interface Attributes {
-  color: string,
-  description: string,
-  direction_destinations: Array<string>,
-  direction_names: Array<string>,
-  fare_class: string,
-  long_name: string,
-  short_name: string,
-  sort_order: number,
-  text_color: string,
-  type: number
-}
-
-interface Links {
-  self: string
-}
-
-interface Relationships {
-  line: Line
-}
-
-interface Line {
-  data: LineData
-}
-
-interface LineData {
-  id: string,
-  type: string
-}
-
 interface RoutesMap {
-  [key: string]: any
+  [key: string]: Array<IRoute>
 }
 
-type RoutesObj = {
-  id: string,
-  list: Array<Route>
+export const getStaticProps: GetStaticProps = async (context) => {
+  const routesResponse = await fetch(`${process.env.NEXT_PUBLIC_CONNECTION_STRING}/routes`);
+  const routesData = await routesResponse.json();
+
+  return {
+      props: routesData
+  };
 };
 
-export default function Home(props: Routes) {
+export default function Home(props: IRoutes) {
   const { data } = props;
-  const [routesData, setRoutesData] = useState({});
-  const [routesList, setRoutesList] = useState<Array<RoutesObj>>([]);
+  const router = useRouter();
+
+  // routesMap = object where key = route type, value = array of routes 
+  const [routesMap, setRoutesMap] = useState<RoutesMap>({});
+  // routeTypesList = array of route types
+  const [routeTypesList, setRouteTypesList] = useState<Array<string>>([]);
+  // routesList = array of routes for a specific route type
+  const [routesList, setRoutesList] = useState<Array<IRoute>>([]);
+  // stopsList = array of stops for a specific route
+  const [stopsList, setStopsList] = useState<Array<IStop>>([]); 
+  // category = current category list
+  const [category, setCategory] = useState<string>('Route Type');
 
   useEffect(() => {
-    const routesMap: RoutesMap = {};
+    const map: RoutesMap = {};
 
     for (const route of data) {
       const routeClass = route.attributes.fare_class;
 
-      if (routeClass in routesMap) {
-          routesMap[`${routeClass}`].push(route);
+      if (routeClass in map) {
+          map[`${routeClass}`].push(route);
       } else {
-          routesMap[`${routeClass}`] = [route];
+          map[`${routeClass}`] = [route];
       }
     }
-    setRoutesData(routesMap);
-    console.log(routesMap);
+    setRoutesMap(map);
+    console.log(map);
 
-    const routesList: Array<RoutesObj> = [];
+    const routesList: Array<string> = [];
 
-    for (const key in routesMap) {
-      const routesListObj: RoutesObj = {
-          id: '',
-          list: []
-      };
-      routesListObj.id = key;
-      routesListObj.list = routesMap[key];
-      routesList.push(routesListObj);
+    for (const key in map) {
+      routesList.push(key);
     }
 
-    setRoutesList(routesList);
+    setRouteTypesList(routesList);
   }, [])
 
-  const handleRouteSelection = (e: HTMLDivElement) => {
-    console.log(e);
+  const handleRouteType = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    // Get selected route type and update routesList
+    const selectedRouteType = e.currentTarget.id;
+    setRoutesList(routesMap[selectedRouteType]);
+    setCategory('Route');
+  }
+
+  const handleRoute = async (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    // Get selected route and find associated route id
+    const selectedRoute = e.currentTarget.id;
+    const route = routesList.find(el => el.attributes.long_name === selectedRoute);
+    // Retrieve stops for selected route using route id
+    const stopsResponse = await fetch(`${process.env.NEXT_PUBLIC_CONNECTION_STRING}/stops?filter%5Broute%5D=${route?.id}`);
+    const stopsData: IStops = await stopsResponse.json();
+    setStopsList(stopsData.data);
+    setCategory('Stop');
+  }
+
+  const handleStop = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    // Get selected stop and navigate user to tracking page with stop id parameter
+    const selectedStop = e.currentTarget.id;
+    const stop = stopsList.find(el => el.attributes.name === selectedStop);
+    router.push(`/tracking/${stop?.id}`)
+  };
+
+  const renderCollection = () => {
+    switch (category) {
+      case 'Route Type':
+        return (
+          routeTypesList.map((el, idx) => {
+            return (
+              <Card 
+                key={idx}
+                data={el}
+                handler={handleRouteType}
+              />
+            );
+          })
+        );
+      case 'Route':
+        return (
+          routesList.map((el, idx) => {
+            return (
+              <Card 
+                key={idx}
+                data={el.attributes.long_name}
+                handler={handleRoute}
+              />
+            );
+          })
+        );
+      case 'Stop':
+        return (
+          stopsList.map((el, idx) => {
+            return (
+              <Card 
+                key={idx}
+                data={el.attributes.name}
+                handler={handleStop}
+              />
+            );
+          })
+        );
+      default:
+        break;
+    }
   }
 
   return (
@@ -108,18 +139,11 @@ export default function Home(props: Routes) {
         <div className={styles.container}>
           <div className={styles.items}>
             <div className={styles['items-header']}>
-              <p>Select Route Type</p>
+              <p>Select {category}</p>
               <hr />
             </div>
             <div className={styles['items-body']}>
-              {routesList.map((el, idx) => {
-                return (
-                  <Card 
-                    key={idx}
-                    data={el}
-                  />
-                );
-              })}
+              {renderCollection()}
             </div>
           </div>
         </div>
@@ -127,12 +151,3 @@ export default function Home(props: Routes) {
     </>
   )
 };
-
-export const getStaticProps: GetStaticProps = async (context) => {
-  const routesResponse = await fetch(`${CONNECTION_STRING}/routes`);
-  const routesData = await routesResponse.json();
-
-  return {
-      props: routesData
-  };
-}
