@@ -22,11 +22,14 @@ export default function Tracking() {
     console.log(stopId);
 
     const predictionsStream = new EventSource(`/api/predictions/${stopId}`);
-    predictionsStream.onmessage = (event) => {
-        console.log('received stream', event.data);
-    };
+    const events: Array<string> = ['reset', 'add', 'update', 'remove'];
 
-    // const predictionsStream = new EventSource(`${process.env.NEXT_PUBLIC_CONNECTION_STRING}/predictions?filter%5Bstop%5D=${stopId}&api_key=${process.env.NEXT_PUBLIC_API_KEY}`, {withCredentials: false});
+    for (const event of events) {
+        predictionsStream.addEventListener(event, (e) => {
+            console.log(event, e.data);
+        });
+    }
+
     predictionsStream.onopen = () => {
         console.log('connection to stream has been opened');
     };

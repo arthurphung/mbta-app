@@ -6,12 +6,11 @@ type Data = {
   data: string
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
+export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
     const { stopId } = req.query;
     res.writeHead(200, {
-        // 'Access-Control-Allow-Origin': '*',
         'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
+        'Cache-Control': 'no-cache, no-transform',
         'Connection': 'keep-alive',
     });
 
@@ -30,15 +29,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         for (const event of events) {
             predictionsSource.addEventListener(event, (e: Data) => {
                 const { data } = e;
-                res.write(`data: {time": asd}\n\n`);
+                console.log(JSON.stringify(data));
+                res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
             })
         };
 
-        // req.on('close', () => {
-        //     for (const event of events) {
-        //         predictionsSource.removeEventListener(event, (e: Data) => {});
-        //     }
-        // })
+        req.on('close', () => {
+            for (const event of events) {
+                predictionsSource.removeEventListener(event, (e: Data) => {});
+            }
+        })
     } catch (error) {
         console.log(error);
     }
