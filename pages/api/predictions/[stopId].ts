@@ -29,8 +29,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
         for (const event of events) {
             predictionsSource.addEventListener(event, (e: Data) => {
                 const { data } = e;
-                console.log(JSON.stringify(data));
-                res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+                res.write(`event: ${event}\ndata: ${data}\n\n`);
             })
         };
 

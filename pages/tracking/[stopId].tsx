@@ -10,7 +10,7 @@ export default function Tracking() {
 
     for (const event of events) {
         predictionsStream.addEventListener(event, (e) => {
-            console.log(event, e.data);
+            console.log(event, JSON.parse(e.data));
         });
     }
 
