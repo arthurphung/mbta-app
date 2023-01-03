@@ -1,20 +1,4 @@
 import { useRouter } from 'next/router';
-import { GetStaticPaths, GetStaticProps } from 'next';
-
-// export const getStaticPaths = () => {
-//     return {
-//         paths: [{ params: {stopId: 'place-harvd'}}],
-//         fallback: false,
-//     };
-// }
-
-// export const getStaticProps: GetStaticProps = async (context) => {
-
-
-//     return {
-//         props: {}
-//     };
-// };
 
 export default function Tracking() {
     const router = useRouter();
