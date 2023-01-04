@@ -1,18 +1,36 @@
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import Countdown from '../../components/Countdown';
+import { IPrediction } from '../../interfaces/IPredictions';
 
 export default function Tracking() {
     const router = useRouter();
     const stopId = router.query.stopId;
-    console.log(stopId);
+    const [predictions, setPredictions] = useState<Array<IPrediction>>([]);
 
     useEffect(() => {
+        // https://stackoverflow.com/questions/64168907/react-eventsource-is-not-closed
         const predictionsStream = new EventSource(`/api/predictions/${stopId}`);
         const events: Array<string> = ['reset', 'add', 'update', 'remove'];
     
         for (const event of events) {
             predictionsStream.addEventListener(event, (e) => {
-                console.log(event, JSON.parse(e.data));
+                const eventData = JSON.parse(e.data);
+                switch (event) {
+                    case 'reset':
+                        console.log('initial predictions list', eventData);
+                        setPredictions(eventData);
+                        break;
+                    case 'add':
+                        break;
+                    case 'update':
+                        updatePredictionsList(eventData);
+                        break;
+                    case 'remove':
+                        break;
+                    default:
+                        break;
+                }
             });
         }
     
@@ -24,10 +42,6 @@ export default function Tracking() {
             console.log('an error occurred while receiving stream', error);
         };
     
-        predictionsStream.addEventListener('close', () => {
-            predictionsStream.close();
-        })
-
         const handleRouteChange = (url: string, { shallow }: { shallow:boolean }) => {
             console.log(`App is changing to ${url} ${shallow ? 'with' : 'without'} shallow routing`);
         }
@@ -40,4 +54,29 @@ export default function Tracking() {
             console.log('connection closed');
         }
     }, []);
+
+    const updatePredictionsList = (data: IPrediction) => {
+        console.log('updated prediction', data);
+
+        const predictionsList = [...predictions];
+        console.log('copied list', predictionsList);
+
+        const updateIdx = predictionsList.findIndex(el => el.id === data.id);
+        console.log(updateIdx);
+    }
+
+    return (
+        <div>
+            <Countdown
+                data={predictions}
+            />
+            <ul>
+                    {predictions.map(el => {
+                        return (
+                            <li>{el.id}</li>
+                        )
+                    })}
+            </ul>
+        </div>
+    );
 };
