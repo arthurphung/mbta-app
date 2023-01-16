@@ -11,12 +11,19 @@ interface Attributes {
     direction_id: number,
     schedule_relationship: string,
     status: string,
-    stop_sequence: number
+    stop_sequence: number,
+    remaining_time: {
+        hours: number,
+        minutes: number,
+        seconds: number
+    }
 }
 
 interface Data {
-    id: string,
-    type: string
+    data: {
+        id: string,
+        type: string
+    }
 }
 
 interface Relationships {

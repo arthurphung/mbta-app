@@ -58,11 +58,14 @@ export default function Tracking() {
     const updatePredictionsList = (data: IPrediction) => {
         console.log('updated prediction', data);
 
-        const predictionsList = [...predictions];
-        console.log('copied list', predictionsList);
-
-        const updateIdx = predictionsList.findIndex(el => el.id === data.id);
-        console.log(updateIdx);
+        setPredictions((predictions) => {
+            return [...predictions].map((prediction) => {
+                if (prediction.id === data.id) {
+                    return data;
+                }
+                return prediction;
+            });
+        })
     }
 
     return (
@@ -70,13 +73,6 @@ export default function Tracking() {
             <Countdown
                 data={predictions}
             />
-            <ul>
-                    {predictions.map(el => {
-                        return (
-                            <li>{el.id}</li>
-                        )
-                    })}
-            </ul>
         </div>
     );
 };
