@@ -1,0 +1,12 @@
+.counter-container {
+    display: inline-grid;
+    grid-template-columns: [col1-start] 2fr [col1-end col2start] 1fr [col2-end col3-start] 2fr [col3-end col4-start] 1fr [col4-end col5-start] 2fr [col5-end];
+    grid-column-gap: 2px;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.counter-container p {
+    display: flex;
+    justify-content: center;
+}

@@ -12,11 +12,6 @@ interface Attributes {
     schedule_relationship: string,
     status: string,
     stop_sequence: number,
-    remaining_time: {
-        hours: number,
-        minutes: number,
-        seconds: number
-    }
 }
 
 interface Data {

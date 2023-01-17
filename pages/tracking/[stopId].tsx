@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
-import Countdown from '../../components/Countdown';
+import Schedule from '../../components/Schedule';
 import { IPrediction } from '../../interfaces/IPredictions';
 
 export default function Tracking() {
@@ -9,7 +9,6 @@ export default function Tracking() {
     const [predictions, setPredictions] = useState<Array<IPrediction>>([]);
 
     useEffect(() => {
-        // https://stackoverflow.com/questions/64168907/react-eventsource-is-not-closed
         const predictionsStream = new EventSource(`/api/predictions/${stopId}`);
         const events: Array<string> = ['reset', 'add', 'update', 'remove'];
     
@@ -70,9 +69,7 @@ export default function Tracking() {
 
     return (
         <div>
-            <Countdown
-                data={predictions}
-            />
+            <Schedule data={predictions.slice(4)} />
         </div>
     );
 };
