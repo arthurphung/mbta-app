@@ -7,6 +7,8 @@ export default function Tracking() {
     const router = useRouter();
     const stopId = router.query.stopId;
     const [predictions, setPredictions] = useState<Array<IPrediction>>([]);
+    const [inboundPredictions, setInboundPredictions] = useState<Array<IPrediction>>([]);
+    const [outboundPredictions, setOutboundPredictions] = useState<Array<IPrediction>>([]);
 
     useEffect(() => {
         const predictionsStream = new EventSource(`/api/predictions/${stopId}`);
