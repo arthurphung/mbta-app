@@ -1,0 +1,21 @@
+.one-countdown-clock {
+    display: grid;
+}
+
+.two-countdowns-clock {
+    display: grid;
+    grid-template-columns: [col1-start] 7fr [col1-end col2-start] 3fr [col2-end];
+}
+
+.three-countdowns-clock {
+    display: grid;
+    grid-template-columns: [col1-start] 6fr [col1-end col2-start] 2fr [col2-end col3-start] 2fr [col3-end];
+}
+
+.primary-prediction {
+
+}
+
+.secondary-prediction {
+
+}

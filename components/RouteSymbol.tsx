@@ -32,9 +32,7 @@ export default function RouteSymbol(props: routeProps) {
 
     return (
         <div>
-            <div>
-                {renderRouteSymbol(props.routeId)}
-            </div>
+            {renderRouteSymbol(props.routeId)}
         </div>
     );
 };

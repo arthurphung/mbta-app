@@ -1,20 +1,20 @@
 import { IPrediction } from '../interfaces/IPredictions';
-import Countdown from './Countdown';
-import RouteSymbol from './RouteSymbol';
+import CountdownClock from './CountdownClock';
 
 type scheduleProps = {
-    data: Array<IPrediction>
+    inboundPredictions: Array<IPrediction>,
+    outboundPredictions: Array<IPrediction>
 }
 
 export default function Schedule(props: scheduleProps) {
     return (
-        <>
-            <div className='primary-prediction'>
-                
+        <div className='schedule-container'>
+            <div className='inbound-container'>
+                <CountdownClock data={props.inboundPredictions} />
             </div>
-            <div className='secondary-predictions'>
-            
+            <div className='outbound-container'>
+                <CountdownClock data={props.outboundPredictions} />
             </div>
-        </>
+        </div>
     );
 };

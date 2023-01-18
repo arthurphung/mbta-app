@@ -6,7 +6,6 @@ import { IPrediction } from '../../interfaces/IPredictions';
 export default function Tracking() {
     const router = useRouter();
     const stopId = router.query.stopId;
-    const [predictions, setPredictions] = useState<Array<IPrediction>>([]);
     const [inboundPredictions, setInboundPredictions] = useState<Array<IPrediction>>([]);
     const [outboundPredictions, setOutboundPredictions] = useState<Array<IPrediction>>([]);
 
@@ -16,16 +15,29 @@ export default function Tracking() {
     
         for (const event of events) {
             predictionsStream.addEventListener(event, (e) => {
-                const eventData = JSON.parse(e.data);
                 switch (event) {
                     case 'reset':
-                        console.log('initial predictions list', eventData);
-                        setPredictions(eventData);
+                        const resetData: Array<IPrediction> = JSON.parse(e.data);
+
+                        const inboundPredictions: Array<IPrediction> = [];
+                        const outboundPredictions: Array<IPrediction> = [];
+
+                        resetData.forEach((prediction) => {
+                            if (prediction.attributes.direction_id === 1) {
+                                inboundPredictions.push(prediction);
+                            } else {
+                                outboundPredictions.push(prediction);
+                            }
+                        })
+
+                        setInboundPredictions(inboundPredictions);
+                        setOutboundPredictions(outboundPredictions);
                         break;
                     case 'add':
                         break;
                     case 'update':
-                        updatePredictionsList(eventData);
+                        const updateData: IPrediction = JSON.parse(e.data);
+                        updatePredictionsList(updateData);
                         break;
                     case 'remove':
                         break;
@@ -58,20 +70,28 @@ export default function Tracking() {
 
     const updatePredictionsList = (data: IPrediction) => {
         console.log('updated prediction', data);
+        const directionId = data.attributes.direction_id;
 
-        setPredictions((predictions) => {
-            return [...predictions].map((prediction) => {
-                if (prediction.id === data.id) {
-                    return data;
-                }
-                return prediction;
-            });
-        })
+        if (directionId === 1) {
+            setInboundPredictions((inboundPredictions) => {
+                return [...inboundPredictions].map((prediction) => {
+                    if (prediction.id === data.id) return data;
+                    return prediction;
+                })
+            })
+        } else {
+            setOutboundPredictions((outboundPredictions) => {
+                return [...outboundPredictions].map((prediction) => {
+                    if (prediction.id === data.id) return data;
+                    return prediction;
+                })
+            })
+        }
     }
 
     return (
         <div>
-            <Schedule data={predictions.slice(4)} />
+            <Schedule inboundPredictions={inboundPredictions} outboundPredictions={outboundPredictions} />
         </div>
     );
 };

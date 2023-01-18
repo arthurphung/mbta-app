@@ -1,11 +1,12 @@
 import Head from 'next/head';
 import { GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Card from '../components/Card';
 import { IRoutes, IRoute } from '../interfaces/IRoutes';
 import { IStops, IStop } from '../interfaces/IStops';
 import styles from '../styles/Home.module.css';
+import { RoutesMapContext } from './_app';
 
 interface RoutesMap {
   [key: string]: Array<IRoute>
@@ -23,6 +24,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 export default function Home(props: IRoutes) {
   const { data } = props;
   const router = useRouter();
+  const routesDict = useContext(RoutesMapContext);
 
   // routesMap = object where key = route type, value = array of routes 
   const [routesMap, setRoutesMap] = useState<RoutesMap>({});
@@ -48,7 +50,7 @@ export default function Home(props: IRoutes) {
       }
     }
     setRoutesMap(map);
-    console.log(map);
+    // console.log(map);
 
     const routesList: Array<string> = [];
 
