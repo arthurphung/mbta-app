@@ -16,11 +16,11 @@ interface RoutesMapContextType {
   [key: string]: Array<IRoute>
 }
 
-const RoutesMapContext = createContext<RoutesMapContextType | null>(null);
-export { RoutesMapContext };
+const RouteTypesMapContext = createContext<RoutesMapContextType>({});
+export { RouteTypesMapContext };
 
 export default function App({ Component, pageProps }: AppProps) {
-  const [routesMap, setRoutesMap] = useState<RoutesMapContextType>({});
+  const [routeTypesMap, setRouteTypesMap] = useState<RoutesMapContextType>({});
 
   useEffect(() => {
     const populateRoutesMap = async () => {
@@ -38,16 +38,16 @@ export default function App({ Component, pageProps }: AppProps) {
             map[`${routeClass}`] = [route];
         }
       }
-      setRoutesMap(map);
+      setRouteTypesMap(map);
     }
     populateRoutesMap();
   }, []);
 
   return (
     <main className={roboto.className}>
-      <RoutesMapContext.Provider value={routesMap}>
+      <RouteTypesMapContext.Provider value={routeTypesMap}>
         <Component {...pageProps} />
-      </RoutesMapContext.Provider>
+      </RouteTypesMapContext.Provider>
     </main>
   );
 }

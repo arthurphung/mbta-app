@@ -1,56 +1,53 @@
-import { useContext } from 'react';
 import { IPrediction } from '../interfaces/IPredictions';
-import { RoutesMapContext } from '../pages/_app';
+import { IRouteIdToDestinationsMap } from '../interfaces/IRoutes';
 import styles from '../styles/CountdownClock.module.css';
 import Countdown from './Countdown';
 import RouteSymbol from './RouteSymbol';
 
 type countdownClockProps = {
-    data: Array<IPrediction>
+    routeIdToDestinationsMap: IRouteIdToDestinationsMap,
+    predictions: Array<IPrediction>,
+    directionId: number
 };
 
 export default function CountdownClock(props: countdownClockProps) {
-    const routesMap = useContext(RoutesMapContext);
-
     const renderCountdownClock = () => {
-        if (props.data.length === 0) {
+        if (props.predictions.length === 0) {
             return (
                 <span>No upcoming trains.</span>
             );
-        } else if (props.data.length === 1) {
+        } else if (props.predictions.length === 1) {
             return (
                 <div className={styles['one-countdown-clock']}>
                     <div className={styles['primary-prediction']}>
-                        <Countdown predictedDate={props.data[0].attributes.departure_time} />
+                        <Countdown predictedDate={props.predictions[0].attributes.departure_time} />
                     </div>
                 </div>
             );
-        } else if (props.data.length === 2) {
+        } else if (props.predictions.length === 2) {
             return (
                 <div className={styles['two-countdowns-clock']}>
                     <div className={styles['primary-prediction']}>
-                        <Countdown predictedDate={props.data[0].attributes.departure_time} />
+                        <Countdown predictedDate={props.predictions[0].attributes.departure_time} />
                     </div>
                     <div className={styles['secondary-prediction']}>
-                        <Countdown predictedDate={props.data[1].attributes.departure_time} />
+                        <Countdown predictedDate={props.predictions[1].attributes.departure_time} />
                     </div>
                 </div>
             );
-        } else if (props.data.length >= 3) {
-            const routeDestinations = [];
-
+        } else if (props.predictions.length >= 3) {
             return (
                 <div className={styles['three-countdowns-clock']}>
                     <div className={styles['primary-prediction']}>
-                        <RouteSymbol routeId={props.data[0].relationships.route.data.id} />
-                        <h1></h1>
-                        <Countdown predictedDate={props.data[0].attributes.departure_time} />
+                        <RouteSymbol routeId={props.predictions[0].relationships.route.data.id} />
+                        <h1>{props.routeIdToDestinationsMap[props.predictions[0].relationships.route.data.id][props.directionId]}</h1>
+                        <Countdown predictedDate={props.predictions[0].attributes.departure_time} />
                     </div>
                     <div className={styles['secondary-prediction']}>
-                        <Countdown predictedDate={props.data[1].attributes.departure_time} />
+                        <Countdown predictedDate={props.predictions[1].attributes.departure_time} />
                     </div>
                     <div className={styles['secondary-prediction']}>
-                        <Countdown predictedDate={props.data[2].attributes.departure_time} />
+                        <Countdown predictedDate={props.predictions[2].attributes.departure_time} />
                     </div>
                 </div>
             );

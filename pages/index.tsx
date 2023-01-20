@@ -1,35 +1,20 @@
 import Head from 'next/head';
-import { GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import React, { useState, useEffect, useContext } from 'react';
 import Card from '../components/Card';
-import { IRoutes, IRoute } from '../interfaces/IRoutes';
+import { IRoute } from '../interfaces/IRoutes';
 import { IStops, IStop } from '../interfaces/IStops';
 import styles from '../styles/Home.module.css';
-import { RoutesMapContext } from './_app';
+import { RouteTypesMapContext } from './_app';
 
-interface RoutesMap {
-  [key: string]: Array<IRoute>
-}
-
-export const getStaticProps: GetStaticProps = async (context) => {
-  const routesResponse = await fetch(`${process.env.NEXT_PUBLIC_CONNECTION_STRING}/routes`);
-  const routesData = await routesResponse.json();
-
-  return {
-      props: routesData
-  };
-};
-
-export default function Home(props: IRoutes) {
-  const { data } = props;
+export default function Home() {
   const router = useRouter();
-  const routesDict = useContext(RoutesMapContext);
+  const routeTypesMapContext = useContext(RouteTypesMapContext);
 
-  // routesMap = object where key = route type, value = array of routes 
-  const [routesMap, setRoutesMap] = useState<RoutesMap>({});
   // routeTypesList = array of route types
   const [routeTypesList, setRouteTypesList] = useState<Array<string>>([]);
+  // routeType = selected route type
+  const [routeType, setRouteType] = useState<string>('');
   // routesList = array of routes for a specific route type
   const [routesList, setRoutesList] = useState<Array<IRoute>>([]);
   // stopsList = array of stops for a specific route
@@ -38,34 +23,25 @@ export default function Home(props: IRoutes) {
   const [category, setCategory] = useState<string>('Route Type');
 
   useEffect(() => {
-    const map: RoutesMap = {};
-
-    for (const route of data) {
-      const routeClass = route.attributes.fare_class;
-
-      if (routeClass in map) {
-          map[`${routeClass}`].push(route);
-      } else {
-          map[`${routeClass}`] = [route];
-      }
-    }
-    setRoutesMap(map);
-    // console.log(map);
-
     const routesList: Array<string> = [];
 
-    for (const key in map) {
-      routesList.push(key);
+    if (routeTypesMapContext) {
+      for (const key in routeTypesMapContext) {
+        routesList.push(key);
+      }
     }
 
     setRouteTypesList(routesList);
-  }, [])
+  }, [routeTypesMapContext])
 
   const handleRouteType = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     // Get selected route type and update routesList
     const selectedRouteType = e.currentTarget.id;
-    setRoutesList(routesMap[selectedRouteType]);
+    const routesList = routeTypesMapContext[selectedRouteType]
+    setRoutesList(routesList);
+
     setCategory('Route');
+    setRouteType(selectedRouteType);
   }
 
   const handleRoute = async (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -83,7 +59,10 @@ export default function Home(props: IRoutes) {
     // Get selected stop and navigate user to tracking page with stop id parameter
     const selectedStop = e.currentTarget.id;
     const stop = stopsList.find(el => el.attributes.name === selectedStop);
-    router.push(`/tracking/${stop?.id}`)
+    router.push({
+      pathname: `/tracking/${stop?.id}`,
+      query: { routeType: routeType }
+    });
   };
 
   const renderCollection = () => {
