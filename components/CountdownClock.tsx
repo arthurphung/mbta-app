@@ -19,7 +19,7 @@ export default function CountdownClock(props: countdownClockProps) {
         } else if (props.predictions.length === 1) {
             return (
                 <div className={styles['one-countdown-clock']}>
-                    <div className={styles['primary-prediction']}>
+                    <div className={styles['first-prediction']}>
                         <Countdown predictedDate={props.predictions[0].attributes.departure_time} />
                     </div>
                 </div>
@@ -27,10 +27,10 @@ export default function CountdownClock(props: countdownClockProps) {
         } else if (props.predictions.length === 2) {
             return (
                 <div className={styles['two-countdowns-clock']}>
-                    <div className={styles['primary-prediction']}>
+                    <div className={styles['first-prediction']}>
                         <Countdown predictedDate={props.predictions[0].attributes.departure_time} />
                     </div>
-                    <div className={styles['secondary-prediction']}>
+                    <div className={styles['second-prediction']}>
                         <Countdown predictedDate={props.predictions[1].attributes.departure_time} />
                     </div>
                 </div>
@@ -38,15 +38,15 @@ export default function CountdownClock(props: countdownClockProps) {
         } else if (props.predictions.length >= 3) {
             return (
                 <div className={styles['three-countdowns-clock']}>
-                    <div className={styles['primary-prediction']}>
+                    <div className={styles['first-prediction']}>
                         <RouteSymbol routeId={props.predictions[0].relationships.route.data.id} />
-                        <h1>{props.routeIdToDestinationsMap[props.predictions[0].relationships.route.data.id][props.directionId]}</h1>
+                        <div>{props.routeIdToDestinationsMap[props.predictions[0].relationships.route.data.id][props.directionId]}</div>
                         <Countdown predictedDate={props.predictions[0].attributes.departure_time} />
                     </div>
-                    <div className={styles['secondary-prediction']}>
+                    <div className={styles['second-prediction']}>
                         <Countdown predictedDate={props.predictions[1].attributes.departure_time} />
                     </div>
-                    <div className={styles['secondary-prediction']}>
+                    <div className={styles['third-prediction']}>
                         <Countdown predictedDate={props.predictions[2].attributes.departure_time} />
                     </div>
                 </div>

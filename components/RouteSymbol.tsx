@@ -1,5 +1,4 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faB, faC, faD, faE } from '@fortawesome/free-solid-svg-icons';
+import styles from '../styles/RouteSymbol.module.css';
 
 type routeProps = {
     routeId: string
@@ -11,19 +10,19 @@ export default function RouteSymbol(props: routeProps) {
         switch (routeSymbol) {
             case 'B':
                 return (
-                    <FontAwesomeIcon icon={faB} />
+                    <div className={styles['b-route-symbol']}>B</div>
                 );
             case 'C':
                 return (
-                    <FontAwesomeIcon icon={faC} />
+                    <div className={styles['c-route-symbol']}>C</div>
                 );
             case 'D':
                 return (
-                    <FontAwesomeIcon icon={faD} />
+                    <div className={styles['d-route-symbol']}>D</div>
                 );
             case 'E':
                 return (
-                    <FontAwesomeIcon icon={faE} />
+                    <div className={styles['e-route-symbol']}>E</div>
                 );
             default:
                 break;
@@ -31,8 +30,8 @@ export default function RouteSymbol(props: routeProps) {
     };
 
     return (
-        <div>
+        <>
             {renderRouteSymbol(props.routeId)}
-        </div>
+        </>
     );
 };

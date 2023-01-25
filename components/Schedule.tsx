@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
 import { IPrediction } from '../interfaces/IPredictions';
 import { IRouteIdToDestinationsMap } from '../interfaces/IRoutes';
 import CountdownClock from './CountdownClock';
+import styles from '../styles/Schedule.module.css';
 
 type scheduleProps = {
     routeIdToDestinationsMap: IRouteIdToDestinationsMap,
@@ -12,10 +12,10 @@ type scheduleProps = {
 export default function Schedule(props: scheduleProps) {
     return (
         <div className='schedule-container'>
-            <div className='inbound-container'>
+            <div className={styles['schedule-container']}>
                 <CountdownClock routeIdToDestinationsMap={props.routeIdToDestinationsMap} predictions={props.inboundPredictions} directionId={1} />
             </div>
-            <div className='outbound-container'>
+            <div className={styles['schedule-container']}>
                 <CountdownClock routeIdToDestinationsMap={props.routeIdToDestinationsMap} predictions={props.outboundPredictions} directionId={0} />
             </div>
         </div>
