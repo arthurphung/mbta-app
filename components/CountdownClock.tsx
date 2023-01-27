@@ -44,9 +44,11 @@ export default function CountdownClock(props: countdownClockProps) {
                         <Countdown predictedDate={props.predictions[0].attributes.departure_time} />
                     </div>
                     <div className={styles['second-prediction']}>
+                        <RouteSymbol routeId={props.predictions[1].relationships.route.data.id} />
                         <Countdown predictedDate={props.predictions[1].attributes.departure_time} />
                     </div>
                     <div className={styles['third-prediction']}>
+                        <RouteSymbol routeId={props.predictions[2].relationships.route.data.id} />
                         <Countdown predictedDate={props.predictions[2].attributes.departure_time} />
                     </div>
                 </div>
