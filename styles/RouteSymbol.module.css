@@ -1,35 +1,29 @@
-.b-route-symbol {
+.symbol-container {
+    display: grid;
+    align-items: center;
+    justify-items: center;
+}
+
+.route-symbol {
+    color: white;
+    border-radius: 50%;
+    width: 30px;
+    line-height: 30px;
+    text-align: center;
+}
+
+#b-route {
     background: #077d0f;
-    color: white;
-    border-radius: 50%;
-    width: 25px;
-    line-height: 25px;
-    text-align: center;
 }
 
-.c-route-symbol {
+#c-route {
     background: #7a0033;
-    color: white;
-    border-radius: 50%;
-    width: 25px;
-    line-height: 25px;
-    text-align: center;
 }
 
-.d-route-symbol {
+#d-route {
     background: #005dc7;
-    color: white;
-    border-radius: 50%;
-    width: 25px;
-    line-height: 25px;
-    text-align: center;
 }
 
-.e-route-symbol {
+#e-route {
     background: #ffa600;
-    color: white;
-    border-radius: 50%;
-    width: 25px;
-    line-height: 25px;
-    text-align: center;
 }

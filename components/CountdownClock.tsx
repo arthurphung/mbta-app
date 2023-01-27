@@ -40,7 +40,7 @@ export default function CountdownClock(props: countdownClockProps) {
                 <div className={styles['three-countdowns-clock']}>
                     <div className={styles['first-prediction']}>
                         <RouteSymbol routeId={props.predictions[0].relationships.route.data.id} />
-                        <div>{props.routeIdToDestinationsMap[props.predictions[0].relationships.route.data.id][props.directionId]}</div>
+                        <div className='vertical-text-center'>{props.routeIdToDestinationsMap[props.predictions[0].relationships.route.data.id][props.directionId]}</div>
                         <Countdown predictedDate={props.predictions[0].attributes.departure_time} />
                     </div>
                     <div className={styles['second-prediction']}>

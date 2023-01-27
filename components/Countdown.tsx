@@ -9,7 +9,7 @@ export default function Countdown(props: countdownProps) {
     const [hours, minutes, seconds] = useCountdown(props.predictedDate);
 
     return (
-        <div className='countdown-container'>
+        <div className='vertical-text-center'>
             <Counter hours={hours} minutes={minutes} seconds={seconds} />
         </div>
     );

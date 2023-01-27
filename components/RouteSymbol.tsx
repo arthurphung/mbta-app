@@ -10,19 +10,19 @@ export default function RouteSymbol(props: routeProps) {
         switch (routeSymbol) {
             case 'B':
                 return (
-                    <div className={styles['b-route-symbol']}>B</div>
+                    <div className={styles['route-symbol']} id={styles['b-route']}>B</div>
                 );
             case 'C':
                 return (
-                    <div className={styles['c-route-symbol']}>C</div>
+                    <div className={styles['route-symbol']} id={styles['c-route']}>C</div>
                 );
             case 'D':
                 return (
-                    <div className={styles['d-route-symbol']}>D</div>
+                    <div className={styles['route-symbol']} id={styles['d-route']}>D</div>
                 );
             case 'E':
                 return (
-                    <div className={styles['e-route-symbol']}>E</div>
+                    <div className={styles['route-symbol']} id={styles['e-route']}>E</div>
                 );
             default:
                 break;
@@ -30,8 +30,8 @@ export default function RouteSymbol(props: routeProps) {
     };
 
     return (
-        <>
+        <div className={styles['symbol-container']}>
             {renderRouteSymbol(props.routeId)}
-        </>
+        </div>
     );
 };
