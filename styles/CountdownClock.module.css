@@ -1,0 +1,47 @@
+.one-countdown-clock {
+    display: grid;
+}
+
+.two-countdowns-clock {
+    display: grid;
+    grid-template-columns: [col1-start] 7fr [col1-end col2-start] 3fr [col2-end];
+}
+
+.three-countdowns-clock {
+    display: grid;
+    grid-template-columns: [col1-start] 6fr [col1-end col2-start] 2fr [col2-end col3-start] 2fr [col3-end];
+    border: 1px solid black;
+    border-radius: 8px;
+}
+
+.first-prediction {
+    display: grid;
+    grid-template-columns: [col1-start] 1.25fr [col1-end col2-start] 7.5fr [col2-end col3-stat] 1.25fr [col3-end];
+    border-right: 1px solid black;
+    border-radius: 8px;
+    box-shadow: 5px 0px 6px -6px rgb(0, 0, 0.5);
+    background-color: white;
+    z-index: 2;
+}
+
+.second-prediction {
+    display: grid;
+    grid-template-columns: [col1-start] 1fr [col1-end col2-start] 1fr [col2-end];
+    border-right: 1px solid black;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    box-shadow: 5px 0px 6px -6px rgb(0, 0, 0.5);
+    background-color: #f2f2f2;
+    margin-left: -5px;
+    z-index: 1;
+}
+
+.third-prediction {
+    display: grid;
+    grid-template-columns: [col1-start] 1fr [col1-end col2-start] 1fr [col2-end];
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    background-color: #bfbfbf;
+    margin-left: -5px;
+    z-index: 0;
+}

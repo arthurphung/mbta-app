@@ -10,6 +10,10 @@ export interface IRoute {
     type: string
 };
 
+export interface IRouteIdToDestinationsMap {
+    [key: string]: Array<string>
+}
+
 interface Attributes {
     color: string,
     description: string,

@@ -1,0 +1,29 @@
+.symbol-container {
+    display: grid;
+    align-items: center;
+    justify-items: center;
+}
+
+.route-symbol {
+    color: white;
+    border-radius: 50%;
+    width: 30px;
+    line-height: 30px;
+    text-align: center;
+}
+
+#b-route {
+    background: #077d0f;
+}
+
+#c-route {
+    background: #7a0033;
+}
+
+#d-route {
+    background: #005dc7;
+}
+
+#e-route {
+    background: #ff6a00;
+}

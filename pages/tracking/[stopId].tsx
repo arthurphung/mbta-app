@@ -1,32 +1,62 @@
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
-import Countdown from '../../components/Countdown';
+import { useState, useEffect, useContext } from 'react';
+import Schedule from '../../components/Schedule';
 import { IPrediction } from '../../interfaces/IPredictions';
+import { IRouteIdToDestinationsMap } from '../../interfaces/IRoutes';
+import { RouteTypesMapContext } from '../_app';
+
 
 export default function Tracking() {
     const router = useRouter();
     const stopId = router.query.stopId;
-    const [predictions, setPredictions] = useState<Array<IPrediction>>([]);
+    const routeType = router.query.routeType as string;
+    const routeTypesMapContext = useContext(RouteTypesMapContext);
+
+    const [inboundPredictions, setInboundPredictions] = useState<Array<IPrediction>>([]);
+    const [outboundPredictions, setOutboundPredictions] = useState<Array<IPrediction>>([]);
+    const [routeIdToDetailsMap, setRouteIdToDestinationsMap] = useState<IRouteIdToDestinationsMap>({});
 
     useEffect(() => {
-        // https://stackoverflow.com/questions/64168907/react-eventsource-is-not-closed
         const predictionsStream = new EventSource(`/api/predictions/${stopId}`);
         const events: Array<string> = ['reset', 'add', 'update', 'remove'];
     
         for (const event of events) {
             predictionsStream.addEventListener(event, (e) => {
-                const eventData = JSON.parse(e.data);
                 switch (event) {
                     case 'reset':
-                        console.log('initial predictions list', eventData);
-                        setPredictions(eventData);
+                        const resetData: Array<IPrediction> = JSON.parse(e.data);
+
+                        const inboundPredictions: Array<IPrediction> = [];
+                        const outboundPredictions: Array<IPrediction> = [];
+
+                        resetData.forEach((prediction) => {
+                            if (prediction.attributes.direction_id === 1) {
+                                inboundPredictions.push(prediction);
+                            } else {
+                                outboundPredictions.push(prediction);
+                            }
+                        })
+
+                        setInboundPredictions(inboundPredictions);
+                        setOutboundPredictions(outboundPredictions);
+
+                        const routesList = routeTypesMapContext[routeType];
+                        const map: IRouteIdToDestinationsMap = {};
+
+                        routesList.forEach((route) => {
+                          map[`${route.id}`] = route.attributes.direction_destinations;
+                        });
+                        setRouteIdToDestinationsMap(map);
                         break;
                     case 'add':
                         break;
                     case 'update':
-                        updatePredictionsList(eventData);
+                        const updateData: IPrediction = JSON.parse(e.data);
+                        updatePredictionsList(updateData);
                         break;
                     case 'remove':
+                        const removeData = JSON.parse(e.data);
+                        console.log('remove prediction', removeData);
                         break;
                     default:
                         break;
@@ -57,26 +87,32 @@ export default function Tracking() {
 
     const updatePredictionsList = (data: IPrediction) => {
         console.log('updated prediction', data);
+        const directionId = data.attributes.direction_id;
 
-        const predictionsList = [...predictions];
-        console.log('copied list', predictionsList);
-
-        const updateIdx = predictionsList.findIndex(el => el.id === data.id);
-        console.log(updateIdx);
+        if (directionId === 1) {
+            setInboundPredictions((inboundPredictions) => {
+                return [...inboundPredictions].map((prediction) => {
+                    if (prediction.id === data.id) return data;
+                    return prediction;
+                })
+            })
+        } else {
+            setOutboundPredictions((outboundPredictions) => {
+                return [...outboundPredictions].map((prediction) => {
+                    if (prediction.id === data.id) return data;
+                    return prediction;
+                })
+            })
+        }
     }
 
     return (
         <div>
-            <Countdown
-                data={predictions}
+            <Schedule 
+                routeIdToDestinationsMap={routeIdToDetailsMap}
+                inboundPredictions={inboundPredictions} 
+                outboundPredictions={outboundPredictions} 
             />
-            <ul>
-                    {predictions.map(el => {
-                        return (
-                            <li>{el.id}</li>
-                        )
-                    })}
-            </ul>
         </div>
     );
 };
