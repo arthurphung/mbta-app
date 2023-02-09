@@ -8,7 +8,8 @@ const useCountdown = (targetPrediction: IPrediction, handleExpiredPrediction: Fu
     useEffect(() => {
         const interval = setInterval(() => {
             const remainingTime = countdownDate - new Date().getTime();
-            if (remainingTime < 0) {
+            if (remainingTime < 1000) {
+                clearInterval(interval);
                 handleExpiredPrediction(targetPrediction.id);
             }
             setCountdown(remainingTime);
