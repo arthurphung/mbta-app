@@ -6,3 +6,15 @@ html {
   display: grid;
   align-items: center;
 }
+
+.centered-page-contents {
+  width: 100%;
+  height: 100vh;
+  display: grid;
+  justify-content: center;
+  align-content: center;
+}
+
+.mb-spacing {
+  margin-bottom: 10px;
+}

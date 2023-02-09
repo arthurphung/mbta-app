@@ -16,8 +16,7 @@ interface RoutesMapContextType {
   [key: string]: Array<IRoute>
 }
 
-const RouteTypesMapContext = createContext<RoutesMapContextType>({});
-export { RouteTypesMapContext };
+export const RouteTypesMapContext = createContext<RoutesMapContextType>({});
 
 export default function App({ Component, pageProps }: AppProps) {
   const [routeTypesMap, setRouteTypesMap] = useState<RoutesMapContextType>({});

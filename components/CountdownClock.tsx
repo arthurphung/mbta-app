@@ -7,7 +7,8 @@ import RouteSymbol from './RouteSymbol';
 type countdownClockProps = {
     routeIdToDestinationsMap: IRouteIdToDestinationsMap,
     predictions: Array<IPrediction>,
-    directionId: number
+    directionId: number,
+    handleExpiredPrediction: Function
 };
 
 export default function CountdownClock(props: countdownClockProps) {
@@ -20,7 +21,7 @@ export default function CountdownClock(props: countdownClockProps) {
             return (
                 <div className={styles['one-countdown-clock']}>
                     <div className={styles['first-prediction']}>
-                        <Countdown predictedDate={props.predictions[0].attributes.departure_time} />
+                        <Countdown prediction={props.predictions[0]} handleExpiredPrediction={props.handleExpiredPrediction} />
                     </div>
                 </div>
             );
@@ -28,10 +29,10 @@ export default function CountdownClock(props: countdownClockProps) {
             return (
                 <div className={styles['two-countdowns-clock']}>
                     <div className={styles['first-prediction']}>
-                        <Countdown predictedDate={props.predictions[0].attributes.departure_time} />
+                        <Countdown prediction={props.predictions[0]} handleExpiredPrediction={props.handleExpiredPrediction} />
                     </div>
                     <div className={styles['second-prediction']}>
-                        <Countdown predictedDate={props.predictions[1].attributes.departure_time} />
+                        <Countdown prediction={props.predictions[1]} handleExpiredPrediction={props.handleExpiredPrediction} />
                     </div>
                 </div>
             );
@@ -41,15 +42,15 @@ export default function CountdownClock(props: countdownClockProps) {
                     <div className={styles['first-prediction']}>
                         <RouteSymbol routeId={props.predictions[0].relationships.route.data.id} />
                         <div className='vertical-text-center'>{props.routeIdToDestinationsMap[props.predictions[0].relationships.route.data.id][props.directionId]}</div>
-                        <Countdown predictedDate={props.predictions[0].attributes.departure_time} />
+                        <Countdown prediction={props.predictions[0]} handleExpiredPrediction={props.handleExpiredPrediction} />
                     </div>
                     <div className={styles['second-prediction']}>
                         <RouteSymbol routeId={props.predictions[1].relationships.route.data.id} />
-                        <Countdown predictedDate={props.predictions[1].attributes.departure_time} />
+                        <Countdown prediction={props.predictions[1]} handleExpiredPrediction={props.handleExpiredPrediction} />
                     </div>
                     <div className={styles['third-prediction']}>
                         <RouteSymbol routeId={props.predictions[2].relationships.route.data.id} />
-                        <Countdown predictedDate={props.predictions[2].attributes.departure_time} />
+                        <Countdown prediction={props.predictions[2]} handleExpiredPrediction={props.handleExpiredPrediction} />
                     </div>
                 </div>
             );
