@@ -2,6 +2,7 @@ import styles from '../styles/DateTimeDisplay.module.css';
 
 type dateTimeDisplayProps = {
     value: number,
+    type: string,
     isDanger: boolean
 }
 
@@ -13,6 +14,7 @@ export default function DateTimeDisplay(props: dateTimeDisplayProps) {
     return (
         <div className={props.isDanger ? styles['countdown-danger'] : 'countdown'}>
             <p>{padTo2Digits(props.value)}</p>
+            <span>{props.type}</span>
         </div>
     );
 };

@@ -1,12 +1,14 @@
 import { useCountdown } from '../hooks/useCountdown';
+import { IPrediction } from '../interfaces/IPredictions';
 import Counter from './Counter';
 
 type countdownProps = {
-    predictedDate: string
+    prediction: IPrediction,
+    handleExpiredPrediction: Function
 }
 
 export default function Countdown(props: countdownProps) {
-    const [hours, minutes, seconds] = useCountdown(props.predictedDate);
+    const [hours, minutes, seconds] = useCountdown(props.prediction, props.handleExpiredPrediction);
 
     return (
         <div className='vertical-text-center'>

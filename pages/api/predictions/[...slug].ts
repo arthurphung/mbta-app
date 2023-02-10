@@ -7,7 +7,8 @@ type Data = {
 }
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
-    const { stopId } = req.query;
+    const { slug } = req.query as { slug: Array<string> };
+    console.log(slug);
     res.writeHead(200, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache, no-transform',
@@ -17,7 +18,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
     const events: Array<string> = ['reset', 'add', 'update', 'remove'];
 
     try {
-        const predictionsSource = new eventSource(`${process.env.CONNECTION_STRING}/predictions?filter%5Bstop%5D=${stopId}`, 
+        const predictionsSource = new eventSource(`${process.env.CONNECTION_STRING}/predictions?sort=departure_time&filter\[stop\]=${slug[0]}&filter\[direction_id\]=${slug[1]}`, 
             {
                 headers: {
                     'Accept': 'text/event-stream',

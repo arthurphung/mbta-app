@@ -27,3 +27,8 @@ interface Relationships {
     trip: Data,
     vehicle: Data
 }
+
+export interface IData {
+    id: string,
+    type: string
+}

@@ -12,17 +12,20 @@ export default function Counter(props: counterProps) {
         <div className={styles["counter-container"]}>
             <DateTimeDisplay
                 value={props.hours}
-                isDanger={props.minutes < 3}
+                type={'Hours'}
+                isDanger={props.minutes < 1}
             />
-            <p>:</p>
+            <p>|</p>
             <DateTimeDisplay 
                 value={props.minutes}
-                isDanger={props.minutes < 3}
+                type={'Mins'}
+                isDanger={props.minutes < 1}
             />
-            <p>:</p>
+            <p>|</p>
             <DateTimeDisplay 
                 value={props.seconds}
-                isDanger={props.minutes < 3}
+                type={'Secs'}
+                isDanger={props.minutes < 1}
             />
         </div>
     );
