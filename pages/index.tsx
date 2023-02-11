@@ -8,6 +8,7 @@ import styles from '../styles/Home.module.css';
 import { RouteTypesMapContext } from './_app';
 
 export default function Home() {
+  console.log('Home');
   const router = useRouter();
   const routeTypesMapContext = useContext(RouteTypesMapContext);
 
