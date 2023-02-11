@@ -49,7 +49,7 @@ export default function Home() {
     const selectedRoute = e.currentTarget.id;
     const route = routesList.find(el => el.attributes.long_name === selectedRoute);
     // Retrieve stops for selected route using route id
-    const stopsResponse = await fetch(`${process.env.NEXT_PUBLIC_CONNECTION_STRING}/stops?filter%5Broute%5D=${route?.id}`);
+    const stopsResponse = await fetch(`/api/stops/${route?.id}`);
     const stopsData: IStops = await stopsResponse.json();
     setStopsList(stopsData.data);
     setCategory('Stop');
