@@ -8,7 +8,6 @@ type Data = {
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
     const { slug } = req.query as { slug: Array<string> };
-    console.log(slug);
     res.writeHead(200, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache, no-transform',

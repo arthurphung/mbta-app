@@ -23,7 +23,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     const populateRoutesMap = async () => {
-      const routesResponse = await fetch(`${process.env.NEXT_PUBLIC_CONNECTION_STRING}/routes`);
+      const routesResponse = await fetch('api/routes/routes');
       const routesData = await routesResponse.json();
 
       const map: RoutesMapContextType = {};

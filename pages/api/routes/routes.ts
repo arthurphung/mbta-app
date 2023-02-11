@@ -5,9 +5,12 @@ type Data = {
   name: string
 }
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  res.status(200).json({ name: 'John Doe' })
+  const routesRes = await fetch(`${process.env.CONNECTION_STRING}/routes`);
+  const routesData = await routesRes.json();
+  
+  res.status(200).json(routesData);
 }
