@@ -1,18 +1,20 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useState, useEffect, useContext } from 'react';
+import Dropdown from '../components/Dropdown';
 import Card from '../components/Card';
 import { IRoute } from '../interfaces/IRoutes';
 import { IStops, IStop } from '../interfaces/IStops';
 import styles from '../styles/Home.module.css';
 import { RouteTypesMapContext } from './_app';
+import { IDropdownOption } from '../interfaces/IDropdownOption';
 
 export default function Home() {
   const router = useRouter();
   const routeTypesMapContext = useContext(RouteTypesMapContext);
 
   // routeTypesList = array of route types
-  const [routeTypesList, setRouteTypesList] = useState<Array<string>>([]);
+  const [routeTypesList, setRouteTypesList] = useState<Array<IDropdownOption>>([]);
   // routeType = selected route type
   const [routeType, setRouteType] = useState<string>('');
   // routesList = array of routes for a specific route type
@@ -23,11 +25,12 @@ export default function Home() {
   const [category, setCategory] = useState<string>('Route Type');
 
   useEffect(() => {
-    const routesList: Array<string> = [];
+    const routesList: Array<IDropdownOption> = [];
 
     if (routeTypesMapContext) {
       for (const key in routeTypesMapContext) {
-        routesList.push(key);
+        const dropdownOption: IDropdownOption = { 'value': key.toLowerCase(), 'label': key };
+        routesList.push(dropdownOption);
       }
     }
 
@@ -65,19 +68,21 @@ export default function Home() {
     });
   };
 
+  const handleDropdownOnChange = (option: IDropdownOption) => {
+    console.log(option);
+  }
+
   const renderCollection = () => {
     switch (category) {
       case 'Route Type':
         return (
-          routeTypesList.map((el, idx) => {
-            return (
-              <Card 
-                key={idx}
-                data={el}
-                handler={handleRouteType}
-              />
-            );
-          })
+          <Dropdown 
+            placeholder='Select...' 
+            options={routeTypesList} 
+            isMulti={false}
+            isSearchable={true}
+            onChange={handleDropdownOnChange} 
+          />
         );
       case 'Route':
         return (
