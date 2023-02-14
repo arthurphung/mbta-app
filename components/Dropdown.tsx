@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, ChangeEvent } from 'react';
-import { motion, Variants } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleDown, faXmark } from '@fortawesome/free-solid-svg-icons';
 import styles from '../styles/Dropdown.module.css';
