@@ -84,6 +84,7 @@ export default function Dropdown(props: DropdownProps) {
             newValue = option;
         }
         setSelectedValue(newValue);
+        props.onChange(newValue);
     };
 
     const removeOption = (option: IDropdownOption): Array<IDropdownOption> => {
@@ -96,7 +97,9 @@ export default function Dropdown(props: DropdownProps) {
     const onTagRemove = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>, option: IDropdownOption) => {
         e.stopPropagation();
         if (Array.isArray(selectedValue)) {
-            setSelectedValue(removeOption(option))
+            const newValue = removeOption(option);
+            setSelectedValue(newValue);
+            props.onChange(newValue);
         }
     };
 
