@@ -19,23 +19,31 @@ export default function Dropdown(props: DropdownProps) {
     const [selectedValue, setSelectedValue] = useState<Array<IDropdownOption> | IDropdownOption>(props.isMulti ? [] : { 'value': '', 'label': '' });
     const [searchValue, setSearchValue] = useState<string>('');
     const searchRef = useRef<HTMLInputElement>(null);
+    const inputRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         setSearchValue('');
         if (showMenu && searchRef.current) {
             searchRef.current.focus();
         }
+    }, [showMenu]);
 
-        const handler = () => setShowMenu(false);
+    useEffect(() => {
+        const handler = (e: MouseEvent) => {
+            if (inputRef.current && !inputRef.current.contains(e.target as Node)) {
+                console.log(e.target);
+                console.log(inputRef);
+                setShowMenu(false);
+            }
+        } 
 
         window.addEventListener('click', handler);
         return () => {
             window.removeEventListener('click', handler);
         };
-    }, [showMenu]);
+    });
 
-    const handleInputClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        e.stopPropagation();
+    const handleInputClick = () => {
         setShowMenu(!showMenu);
     }
 
@@ -131,7 +139,7 @@ export default function Dropdown(props: DropdownProps) {
 
     return (
         <motion.div animate={showMenu ? 'open' : 'closed'} className={styles['dropdown-container']}>
-            <div className={styles['dropdown-input']} onClick={handleInputClick}>
+            <div ref={inputRef} className={styles['dropdown-input']} onClick={handleInputClick}>
                 <div className='dropdown-selected-value'>{displaySelection()}</div>
                 <motion.div 
                     variants={{
