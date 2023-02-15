@@ -18,11 +18,13 @@ export default function Home() {
   // routeType = selected route type
   const [routeType, setRouteType] = useState<string>('');
   // routesList = array of routes for a specific route type
-  const [routesList, setRoutesList] = useState<Array<IRoute>>([]);
+  const [routesList, setRoutesList] = useState<Array<IDropdownOption>>([]);
   // stopsList = array of stops for a specific route
-  const [stopsList, setStopsList] = useState<Array<IStop>>([]); 
+  const [stopsList, setStopsList] = useState<Array<IDropdownOption>>([]); 
   // category = current category list
   const [category, setCategory] = useState<string>('Route Type');
+  const [showRoutes, setShowRoutes] = useState<Boolean>(false);
+  const [showStops, setShowStops] = useState<Boolean>(false);
 
   useEffect(() => {
     const routesList: Array<IDropdownOption> = [];
@@ -37,81 +39,43 @@ export default function Home() {
     setRouteTypesList(routesList);
   }, [routeTypesMapContext])
 
-  const handleRouteType = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleRouteType = (option: IDropdownOption) => {
     // Get selected route type and update routesList
-    const selectedRouteType = e.currentTarget.id;
-    const routesList = routeTypesMapContext[selectedRouteType]
+    const routesList: Array<IDropdownOption> = [];
+    routeTypesMapContext[option.label].forEach((route) => routesList.push({ 'value': route.id, 'label': route.attributes.long_name }));
     setRoutesList(routesList);
-
-    setCategory('Route');
-    setRouteType(selectedRouteType);
+    setRouteType(option.label);
+    setShowRoutes(true);
   }
 
-  const handleRoute = async (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleRoute = async (option: IDropdownOption) => {
     // Get selected route and find associated route id
-    const selectedRoute = e.currentTarget.id;
-    const route = routesList.find(el => el.attributes.long_name === selectedRoute);
+    const route: IDropdownOption | undefined = routesList.find((route) => route.value === option.value);
     // Retrieve stops for selected route using route id
-    const stopsResponse = await fetch(`/api/stops/${route?.id}`);
-    const stopsData: IStops = await stopsResponse.json();
-    setStopsList(stopsData.data);
-    setCategory('Stop');
-  }
-
-  const handleStop = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    // Get selected stop and navigate user to tracking page with stop id parameter
-    const selectedStop = e.currentTarget.id;
-    const stop = stopsList.find(el => el.attributes.name === selectedStop);
-    router.push({
-      pathname: `/tracking/${stop?.id}`,
-      query: { routeType: routeType }
-    });
-  };
-
-  const handleDropdownOnChange = (option: IDropdownOption) => {
-    console.log(option);
-  }
-
-  const renderCollection = () => {
-    switch (category) {
-      case 'Route Type':
-        return (
-          <Dropdown 
-            placeholder='Select...' 
-            options={routeTypesList} 
-            isMulti={false}
-            isSearchable={true}
-            onChange={handleDropdownOnChange} 
-          />
-        );
-      case 'Route':
-        return (
-          routesList.map((el, idx) => {
-            return (
-              <Card 
-                key={idx}
-                data={el.attributes.long_name}
-                handler={handleRoute}
-              />
-            );
-          })
-        );
-      case 'Stop':
-        return (
-          stopsList.map((el, idx) => {
-            return (
-              <Card 
-                key={idx}
-                data={el.attributes.name}
-                handler={handleStop}
-              />
-            );
-          })
-        );
-      default:
-        break;
+    if (route !== undefined) {
+      const stopsResponse = await fetch(`/api/stops/${route.value}`);
+      const stopsData: IStops = await stopsResponse.json();
+      const stopsList: Array<IDropdownOption> = [];
+      stopsData.data.forEach((stop) => stopsList.push({ 'value': stop.id, 'label': stop.attributes.name }));
+      setStopsList(stopsList);
+      setShowStops(true);
+    } else {
+      throw Error(`Unable to find selected route: ${option}`);
     }
   }
+
+  const handleStop = (option: IDropdownOption) => {
+    // Get selected stop and navigate user to tracking page with stop id parameter
+    const stop: IDropdownOption | undefined = stopsList.find((stop) => stop.value === option.value);
+    if (stop !== undefined) {
+      router.push({
+        pathname: `/predictions/${stop.value}`,
+        query: { routeType: routeType }
+      });
+    } else {
+      throw Error(`Unable to find seleced stop: ${option}`);
+    }
+  };
 
   return (
     <>
@@ -125,11 +89,38 @@ export default function Home() {
         <div className={styles.container}>
           <div className={styles.items}>
             <div className={styles['items-header']}>
-              <p>Select {category}</p>
+              <p>Find your current location</p>
               <hr />
             </div>
             <div className={styles['items-body']}>
-              {renderCollection()}
+              <Dropdown 
+                placeholder='Select Route Type' 
+                options={routeTypesList} 
+                isMulti={false}
+                isSearchable={true}
+                onChange={handleRouteType}
+                layer='third'
+              />
+            {showRoutes &&
+              <Dropdown 
+                placeholder='Select Route'
+                options={routesList}
+                isMulti={false}
+                isSearchable={true}
+                onChange={handleRoute}
+                layer='second'
+              />
+            }
+            {showStops &&
+              <Dropdown 
+                placeholder='Select Stop'
+                options={stopsList}
+                isMulti={false}
+                isSearchable={true}
+                onChange={handleStop}
+                layer='first'
+              />
+            }
             </div>
           </div>
         </div>

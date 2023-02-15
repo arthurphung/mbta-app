@@ -11,7 +11,8 @@ interface DropdownProps {
     options: Array<IDropdownOption>,
     isMulti: Boolean,
     isSearchable: Boolean,
-    onChange: Function
+    onChange: Function,
+    layer: string
 }
 
 export default function Dropdown(props: DropdownProps) {
@@ -31,8 +32,6 @@ export default function Dropdown(props: DropdownProps) {
     useEffect(() => {
         const handler = (e: MouseEvent) => {
             if (inputRef.current && !inputRef.current.contains(e.target as Node)) {
-                console.log(e.target);
-                console.log(inputRef);
                 setShowMenu(false);
             }
         } 
@@ -137,8 +136,21 @@ export default function Dropdown(props: DropdownProps) {
         return props.options.filter((option) => option.label.toLowerCase().indexOf(searchValue.toLowerCase()) >= 0);
     }
 
+    const getLayer = () => {
+        switch (props.layer) {
+            case 'first':
+                return styles.first;
+            case 'second':
+                return styles.second;
+            case 'third':
+                return styles.third;
+            default:
+                break;
+        }
+    }
+
     return (
-        <motion.div animate={showMenu ? 'open' : 'closed'} className={styles['dropdown-container']}>
+        <motion.div animate={showMenu ? 'open' : 'closed'} className={cx(styles['dropdown-container'], getLayer())}>
             <div ref={inputRef} className={styles['dropdown-input']} onClick={handleInputClick}>
                 <div className='dropdown-selected-value'>{displaySelection()}</div>
                 <motion.div 
@@ -173,7 +185,7 @@ export default function Dropdown(props: DropdownProps) {
                             return (
                                 <div
                                     key={option.value} 
-                                    className={`${styles['dropdown-item']} ${isSelected(option) && cx(styles['dropdown-item'], styles.selected)}`}
+                                    className={isSelected(option) ? cx(styles['dropdown-item'], styles.selected) : styles['dropdown-item']}
                                     onClick={() => onOptionClick(option)}
                                 >
                                     {option.label}

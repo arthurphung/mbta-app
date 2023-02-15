@@ -5,6 +5,18 @@
     border-radius: 5px;
 }
 
+.dropdown-container.first {
+    z-index: 1;
+}
+
+.dropdown-container.second {
+    z-index: 2;
+}
+
+.dropdown-container.third {
+    z-index: 3;
+}
+
 .dropdown-input {
     padding: 5px;
     display: flex;
