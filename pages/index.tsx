@@ -2,9 +2,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useState, useEffect, useContext } from 'react';
 import Dropdown from '../components/Dropdown';
-import Card from '../components/Card';
-import { IRoute } from '../interfaces/IRoutes';
-import { IStops, IStop } from '../interfaces/IStops';
+import { IStops } from '../interfaces/IStops';
 import styles from '../styles/Home.module.css';
 import { RouteTypesMapContext } from './_app';
 import { IDropdownOption } from '../interfaces/IDropdownOption';
@@ -22,7 +20,6 @@ export default function Home() {
   // stopsList = array of stops for a specific route
   const [stopsList, setStopsList] = useState<Array<IDropdownOption>>([]); 
   // category = current category list
-  const [category, setCategory] = useState<string>('Route Type');
   const [showRoutes, setShowRoutes] = useState<Boolean>(false);
   const [showStops, setShowStops] = useState<Boolean>(false);
 

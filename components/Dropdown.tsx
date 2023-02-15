@@ -164,37 +164,26 @@ export default function Dropdown(props: DropdownProps) {
                     <FontAwesomeIcon icon={faAngleDown} />
                 </motion.div>
             </div>
-            <motion.div 
-                variants={{
-                    open: {
-                        opacity: 1,
-                    },
-                    closed: {
-                        opacity: 0
+            {showMenu &&
+                <div className={styles['dropdown-menu']}>
+                    {props.isSearchable && 
+                        <div className={styles['search-box']}>
+                            <input onChange={onSearch} value={searchValue} ref={searchRef} />
+                        </div>
                     }
-                }}
-            >
-                {showMenu &&
-                    <div className={styles['dropdown-menu']}>
-                        {props.isSearchable && 
-                            <div className={styles['search-box']}>
-                                <input onChange={onSearch} value={searchValue} ref={searchRef} />
+                    {getOptions().map((option) => {
+                        return (
+                            <div
+                                key={option.value} 
+                                className={isSelected(option) ? cx(styles['dropdown-item'], styles.selected) : styles['dropdown-item']}
+                                onClick={() => onOptionClick(option)}
+                            >
+                                {option.label}
                             </div>
-                        }
-                        {getOptions().map((option) => {
-                            return (
-                                <div
-                                    key={option.value} 
-                                    className={isSelected(option) ? cx(styles['dropdown-item'], styles.selected) : styles['dropdown-item']}
-                                    onClick={() => onOptionClick(option)}
-                                >
-                                    {option.label}
-                                </div>
-                            );
-                        })}
-                    </div>
-                }
-            </motion.div>
+                        );
+                    })}
+                </div>
+            }
         </motion.div>
     );
 };
