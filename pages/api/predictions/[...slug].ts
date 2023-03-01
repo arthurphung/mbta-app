@@ -17,7 +17,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
     const events: Array<string> = ['reset', 'add', 'update', 'remove'];
 
     try {
-        const predictionsSource = new eventSource(`${process.env.CONNECTION_STRING}/predictions?sort=departure_time&filter\[stop\]=${slug[0]}&filter\[direction_id\]=${slug[1]}`, 
+        const predictionsSource = new eventSource(`${process.env.CONNECTION_STRING}/predictions?sort=departure_time&filter\[stop\]=${slug[0]}&filter\[route\]=${slug[1]}&filter\[direction_id\]=${slug[2]}`, 
             {
                 headers: {
                     'Accept': 'text/event-stream',

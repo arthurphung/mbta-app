@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useEffect, useState, useContext, createContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { IData, IPrediction } from '../interfaces/IPredictions';
 import { IRouteIdToDestinationsMap } from '../interfaces/IRoutes';
 import CountdownClock from './CountdownClock';
@@ -8,6 +8,7 @@ import { RouteTypesMapContext } from '../pages/_app';
 type scheduleProps = {
     stopId: string,
     routeType: string,
+    routeId: string,
     directionId: number
 }
 
@@ -18,7 +19,7 @@ export default function Schedule(props: scheduleProps) {
     const routeTypesMapContext = useContext(RouteTypesMapContext);
 
     useEffect(() => {
-        const predictionsStream = new EventSource(`/api/predictions/${props.stopId}/${props.directionId}`);
+        const predictionsStream = new EventSource(`/api/predictions/${props.stopId}/${props.routeId}/${props.directionId}`);
         const events: Array<string> = ['reset', 'add', 'update', 'remove'];
     
         for (const event of events) {
