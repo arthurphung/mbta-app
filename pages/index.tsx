@@ -14,9 +14,11 @@ export default function Home() {
     // routeTypesList = array of route types
     const [routeTypesList, setRouteTypesList] = useState<Array<IDropdownOption>>([]);
     // routeType = selected route type
-    const [routeType, setRouteType] = useState<string>('');
+    const [routeType, setRouteType] = useState<string>();
     // routesList = array of routes for a specific route type
     const [routesList, setRoutesList] = useState<Array<IDropdownOption>>([]);
+    // route = selected route
+    const [route, setRoute] = useState<string>();
     // stopsList = array of stops for a specific route
     const [stopsList, setStopsList] = useState<Array<IDropdownOption>>([]); 
     // category = current category list
@@ -28,8 +30,8 @@ export default function Home() {
 
         if (routeTypesMapContext) {
             for (const key in routeTypesMapContext) {
-            const dropdownOption: IDropdownOption = { 'value': key.toLowerCase(), 'label': key };
-            routesList.push(dropdownOption);
+                const dropdownOption: IDropdownOption = { 'value': key.toLowerCase(), 'label': key };
+                routesList.push(dropdownOption);
             }
         }
 
@@ -50,6 +52,7 @@ export default function Home() {
         const route: IDropdownOption | undefined = routesList.find((route) => route.value === option.value);
         // Retrieve stops for selected route using route id
         if (route !== undefined) {
+            setRoute(route.value);
             const stopsResponse = await fetch(`/api/stops/${route.value}`);
             const stopsData: IStops = await stopsResponse.json();
             const stopsList: Array<IDropdownOption> = [];
@@ -67,7 +70,7 @@ export default function Home() {
         if (stop !== undefined) {
             router.push({
                 pathname: `/predictions/${stop.value}`,
-                query: { routeType: routeType }
+                query: { routeType: routeType, routeId: route }
             });
         } else {
             throw Error(`Unable to find seleced stop: ${option}`);
