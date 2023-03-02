@@ -6,6 +6,7 @@ import { IStops } from '../interfaces/IStops';
 import styles from '../styles/Home.module.css';
 import { RouteTypesMapContext } from './_app';
 import { IDropdownOption } from '../interfaces/IDropdownOption';
+import dynamic from 'next/dynamic';
 
 export default function Home() {
     const router = useRouter();
