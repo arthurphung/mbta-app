@@ -2,28 +2,31 @@ import { useRouter } from 'next/router';
 import Schedule from '../../components/Schedule';
 import dynamic from 'next/dynamic';
 import styles from '../../styles/Predictions.module.css';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { IData, IPrediction } from '../../interfaces/IPredictions';
 import { IRouteIdToDestinationsMap } from '../../interfaces/IRoutes';
-import { RouteTypesMapContext } from '../_app';
+import { RouteClassesMapContext } from '../_app';
+import { GetStaticProps } from 'next';
+import { ICoordinates } from '../../interfaces/IMap';
 
 export default function Tracking() {
     const router = useRouter();
     const stopId = router.query.stopId as string;
+    const routeClass = router.query.routeClass as string;
     const routeType = router.query.routeType as string;
-    const routeId = router.query.routeId as string;
     const inboundDirectionId = 1;
     const outboundDirectionId = 0;
 
     const [inboundPredictions, setInboundPredictions] = useState<Array<IPrediction>>([]);
     const [outboundPredictions, setOutboundPredictions] = useState<Array<IPrediction>>([]);
+    const [inboundCoordinates, setInboundCoordinates] = useState<Array<ICoordinates>>([]);
 
     const [routeIdToDestinationsMap, setRouteIdToDestinationsMap] = useState<IRouteIdToDestinationsMap>({});
-    const routeTypesMapContext = useContext(RouteTypesMapContext);
+    const routeClassesMapContext = useContext(RouteClassesMapContext);
 
     useEffect(() => {
-        const inboundPredictionsStream = new EventSource(`/api/predictions/${stopId}/${routeId}/${inboundDirectionId}`);
-        const outboundPredictionsStream = new EventSource(`/api/predictions/${stopId}/${routeId}/${outboundDirectionId}`);
+        const inboundPredictionsStream = new EventSource(`/api/predictions/${stopId}/${routeType}/${inboundDirectionId}`);
+        const outboundPredictionsStream = new EventSource(`/api/predictions/${stopId}/${routeType}/${outboundDirectionId}`);
         const events: Array<string> = ['reset', 'add', 'update', 'remove'];
     
         for (const event of events) {
@@ -31,6 +34,7 @@ export default function Tracking() {
                 switch (event) {
                     case 'reset':
                         const resetData: Array<IPrediction> = JSON.parse(e.data);
+                        console.log(resetData);
                         resetPredictions(resetData, inboundDirectionId);
                         break;
                     case 'add':
@@ -98,7 +102,7 @@ export default function Tracking() {
 
         router.events.on('routeChangeStart', handleRouteChange);
 
-        const routesList = routeTypesMapContext[routeType];
+        const routesList = routeClassesMapContext[routeClass];
         const map: IRouteIdToDestinationsMap = {};
 
         routesList.forEach((route) => {
@@ -184,7 +188,7 @@ export default function Tracking() {
         }
     }
 
-    const InteractiveMap = dynamic(() => import('../../components/InteractiveMap'), { ssr: false });
+    const InteractiveMap = dynamic(() => import('../../components/InteractiveMap'), { ssr: false }); 
 
     return (
         <>
@@ -198,7 +202,11 @@ export default function Tracking() {
                     <Schedule routeIdToDestinationsMap={routeIdToDestinationsMap} predictions={outboundPredictions} directionId={outboundDirectionId} handleExpiredPrediction={removePrediction} />
                 </div>
             </div>
-            <InteractiveMap />
+            {/* <InteractiveMap inboundCoordinates={} /> */}
         </>
     );
 };
+
+// export const getStaticProps: GetStaticProps = async () => {
+//     const 
+// };

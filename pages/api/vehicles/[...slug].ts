@@ -17,7 +17,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
     const events: Array<string> = ['reset', 'add', 'update', 'remove'];
 
     try {
-        const predictionsSource = new eventSource(`${process.env.CONNECTION_STRING}/predictions?sort=departure_time&filter\[stop\]=${slug[0]}&filter\[route_type\]=${slug[1]}&filter\[direction_id\]=${slug[2]}`, 
+        const predictionsSource = new eventSource(`${process.env.CONNECTION_STRING}/vehicles?filter\{id\}=${slug[0]}`, 
             {
                 headers: {
                     'Accept': 'text/event-stream',
@@ -29,6 +29,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
         for (const event of events) {
             predictionsSource.addEventListener(event, (e: Data) => {
                 const { data } = e;
+                console.log(data);
                 res.write(`event: ${event}\ndata: ${data}\n\n`);
             })
         };

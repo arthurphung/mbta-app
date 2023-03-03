@@ -1,24 +1,37 @@
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { ICoordinates } from '../interfaces/IMap';
 
-export default function InteractiveMap() {
+type InteractiveMapProps = {
+    inboundCoordinates: Array<ICoordinates>
+}
+
+export default function InteractiveMap(props: InteractiveMapProps) {
     const icon = new Icon({
         iconUrl: '/marker.png',
         iconSize: [64, 64]
     });
 
     return (
-        <MapContainer center={[51.505, -0.09]} zoom={13} scrollWheelZoom={false} style={{ height: '500px', width: '100%' }}>
+        <MapContainer center={[42.361145, -71.05783]} zoom={13} scrollWheelZoom={false} style={{ height: '500px', width: '100%' }}>
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
             />
-            <Marker icon={icon} position={[51.505, -0.09]}>
-                <Popup>
-                    A pretty popup.
-                </Popup>
-            </Marker>
+            {props.inboundPredictions.map((prediction, idx) => {
+                if (idx < 3) {
+                    return (
+                        <Marker icon={icon} position={[]}>
+                        <Popup>
+                            Last reported position:
+                            <br />
+
+                        </Popup>
+                    </Marker>
+                    );
+                }
+            })}
         </MapContainer>
     );
 };

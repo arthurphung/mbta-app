@@ -3,7 +3,7 @@ import { useEffect, useState, useContext } from 'react';
 import { IData, IPrediction } from '../interfaces/IPredictions';
 import { IRouteIdToDestinationsMap } from '../interfaces/IRoutes';
 import CountdownClock from './CountdownClock';
-import { RouteTypesMapContext } from '../pages/_app';
+import { RouteClassesMapContext } from '../pages/_app';
 
 type scheduleProps = {
     routeIdToDestinationsMap: IRouteIdToDestinationsMap,
