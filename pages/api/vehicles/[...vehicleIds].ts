@@ -7,7 +7,8 @@ type Data = {
 }
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
-    const { slug } = req.query as { slug: Array<string> };
+    const { vehicleIds } = req.query as { vehicleIds: Array<string> };
+    console.log(vehicleIds);
     res.writeHead(200, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache, no-transform',
@@ -17,7 +18,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
     const events: Array<string> = ['reset', 'add', 'update', 'remove'];
 
     try {
-        const predictionsSource = new eventSource(`${process.env.CONNECTION_STRING}/vehicles?filter\{id\}=${slug[0]}`, 
+        const vehiclesSource = new eventSource(`${process.env.CONNECTION_STRING}/vehicles?filter\[id\]=${vehicleIds}`, 
             {
                 headers: {
                     'Accept': 'text/event-stream',
@@ -27,7 +28,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
         );
 
         for (const event of events) {
-            predictionsSource.addEventListener(event, (e: Data) => {
+            vehiclesSource.addEventListener(event, (e: Data) => {
                 const { data } = e;
                 console.log(data);
                 res.write(`event: ${event}\ndata: ${data}\n\n`);
@@ -36,7 +37,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
 
         req.on('close', () => {
             for (const event of events) {
-                predictionsSource.removeEventListener(event, (e: Data) => {});
+                vehiclesSource.removeEventListener(event, (e: Data) => {});
             }
         })
     } catch (error) {

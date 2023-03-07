@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import Schedule from '../../components/Schedule';
 import dynamic from 'next/dynamic';
 import styles from '../../styles/Predictions.module.css';
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { IData, IPrediction } from '../../interfaces/IPredictions';
 import { IRouteIdToDestinationsMap } from '../../interfaces/IRoutes';
 import { RouteClassesMapContext } from '../_app';
@@ -24,10 +24,15 @@ export default function Tracking() {
     const [routeIdToDestinationsMap, setRouteIdToDestinationsMap] = useState<IRouteIdToDestinationsMap>({});
     const routeClassesMapContext = useContext(RouteClassesMapContext);
 
+    const events: Array<string> = ['reset', 'add', 'update', 'remove'];
+
+    const handleRouteChange = (url: string, { shallow }: { shallow:boolean }) => {
+        console.log(`App is changing to ${url} ${shallow ? 'with' : 'without'} shallow routing`);
+    }
+
     useEffect(() => {
         const inboundPredictionsStream = new EventSource(`/api/predictions/${stopId}/${routeType}/${inboundDirectionId}`);
         const outboundPredictionsStream = new EventSource(`/api/predictions/${stopId}/${routeType}/${outboundDirectionId}`);
-        const events: Array<string> = ['reset', 'add', 'update', 'remove'];
     
         for (const event of events) {
             inboundPredictionsStream.addEventListener(event, (e) => {
@@ -95,10 +100,6 @@ export default function Tracking() {
         outboundPredictionsStream.onerror = (error) => {
             console.log('an error occurred while receiving stream', error);
         };
-    
-        const handleRouteChange = (url: string, { shallow }: { shallow:boolean }) => {
-            console.log(`App is changing to ${url} ${shallow ? 'with' : 'without'} shallow routing`);
-        }
 
         router.events.on('routeChangeStart', handleRouteChange);
 
@@ -202,7 +203,7 @@ export default function Tracking() {
                     <Schedule routeIdToDestinationsMap={routeIdToDestinationsMap} predictions={outboundPredictions} directionId={outboundDirectionId} handleExpiredPrediction={removePrediction} />
                 </div>
             </div>
-            {/* <InteractiveMap inboundCoordinates={} /> */}
+            <InteractiveMap inboundPredictions={inboundPredictions} />
         </>
     );
 };
