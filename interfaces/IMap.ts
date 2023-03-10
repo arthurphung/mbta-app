@@ -3,11 +3,7 @@ export interface ICoordinates {
     longitude: number
 };
 
-export interface IVehicles {
-    data: Array<IVehicle>
-}
-
-interface IVehicle {
+export interface IVehicle {
     attributes: Attributes,
     id: string,
     relationships: {

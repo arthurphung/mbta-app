@@ -30,7 +30,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
         for (const event of events) {
             vehiclesSource.addEventListener(event, (e: Data) => {
                 const { data } = e;
-                console.log(data);
                 res.write(`event: ${event}\ndata: ${data}\n\n`);
             })
         };

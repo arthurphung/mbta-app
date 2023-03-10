@@ -8,6 +8,7 @@ import { IRouteIdToDestinationsMap } from '../../interfaces/IRoutes';
 import { RouteClassesMapContext } from '../_app';
 import { GetStaticProps } from 'next';
 import { ICoordinates } from '../../interfaces/IMap';
+import { fetchVehicles } from '../../hooks/fetchVehicles';
 
 export default function Tracking() {
     const router = useRouter();
@@ -119,6 +120,14 @@ export default function Tracking() {
         }
     }, []);
 
+    useEffect(() => {
+        if (inboundPredictions.length) {
+            const x = fetchVehicles(inboundPredictions);
+            console.log("PLS", x);
+            setInboundCoordinates(x);
+        }
+    }, [inboundPredictions]);
+
     const resetPredictions = (data: Array<IPrediction>, directionId: number) => {
         switch (directionId) {
             case 0:
@@ -203,7 +212,7 @@ export default function Tracking() {
                     <Schedule routeIdToDestinationsMap={routeIdToDestinationsMap} predictions={outboundPredictions} directionId={outboundDirectionId} handleExpiredPrediction={removePrediction} />
                 </div>
             </div>
-            <InteractiveMap inboundPredictions={inboundPredictions} />
+            <InteractiveMap coordinates={inboundCoordinates} />
         </>
     );
 };
