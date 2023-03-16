@@ -7,8 +7,7 @@ type Data = {
 }
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
-    const { vehicleIds } = req.query as { vehicleIds: Array<string> };
-    console.log(vehicleIds);
+    const { routeId } = req.query as { routeId: string };
     res.writeHead(200, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache, no-transform',
@@ -18,7 +17,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
     const events: Array<string> = ['reset', 'add', 'update', 'remove'];
 
     try {
-        const vehiclesSource = new eventSource(`${process.env.CONNECTION_STRING}/vehicles?filter\[id\]=${vehicleIds}`, 
+        const vehiclesSource = new eventSource(`${process.env.CONNECTION_STRING}/vehicles?filter\[route\]=${routeId}`, 
             {
                 headers: {
                     'Accept': 'text/event-stream',

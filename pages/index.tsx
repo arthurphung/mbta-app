@@ -6,7 +6,6 @@ import { IStops } from '../interfaces/IStops';
 import styles from '../styles/Home.module.css';
 import { RouteClassesMapContext } from './_app';
 import { IDropdownOption } from '../interfaces/IDropdownOption';
-import dynamic from 'next/dynamic';
 
 export default function Home() {
     const router = useRouter();
@@ -76,7 +75,7 @@ export default function Home() {
         if (stop !== undefined) {
             router.push({
                 pathname: `/predictions/${stop.value}`,
-                query: { routeClass: routeClass, routeType: routeType }
+                query: { routeId: routeId, routeClass: routeClass, routeType: routeType }
             });
         } else {
             throw Error(`Unable to find seleced stop: ${option}`);

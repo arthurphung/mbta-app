@@ -1,25 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useState } from "react";
 import { ICoordinates, IVehicle } from "../interfaces/IMap";
-import { IPrediction } from "../interfaces/IPredictions";
+const eventSource = require('eventsource');
 
-const fetchVehicles = (predictions: Array<IPrediction>) => {
-    let coordinates: Array<ICoordinates> = [];
+const fetchVehicles = (routeId: string) => {
+    const coordinates: Array<ICoordinates> = [];
 
     const events: Array<string> = ['reset', 'add', 'update', 'remove'];
-
-    const vehicleIds: Array<string> = [];
-    predictions.forEach((prediction) => vehicleIds.push(prediction.relationships.vehicle.data.id));
-    const top3VehicleIds = vehicleIds.slice(0, 3).join(',');
-    const vehiclesStream = new EventSource(`/api/vehicles/${top3VehicleIds}`);
+    const vehiclesStream = new EventSource(`/api/vehicles/${routeId}`);
     for (const event of events) {
-        vehiclesStream.addEventListener(event, (e) => {
+        vehiclesStream.addEventListener(event, (e: any) => {
             switch (event) {
                 case 'reset':
                     const resetRes: Array<IVehicle> = JSON.parse(e.data);
                     const resetData: Array<ICoordinates> = [];
                     resetRes.forEach((vehicle) => resetData.push({ latitude: vehicle.attributes.latitude, longitude: vehicle.attributes.longitude }));
-                    coordinates = resetData;
-                    console.log(resetData);
+                    // setCoordinates(resetData);
+                    // console.log(coordinates);
                     // resetPredictions(resetData, inboundDirectionId);
                     break;
                 case 'add':

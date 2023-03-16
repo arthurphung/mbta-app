@@ -1,8 +1,3 @@
-export interface ICoordinates {
-    latitude: number,
-    longitude: number
-};
-
 export interface IVehicle {
     attributes: Attributes,
     id: string,
@@ -30,4 +25,16 @@ interface Attributes {
 interface Data {
     id: string,
     type: string
+}
+
+
+export interface IData {
+    id: string,
+    type: string
+}
+
+export interface ITrip {
+    attributes: {
+        headsign: string
+    }
 }
