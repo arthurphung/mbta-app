@@ -12,21 +12,21 @@ const roboto = Roboto({
   subsets: ['latin']
 });
 
-interface RoutesMapContextType {
+interface RouteClassesMapContextType {
   [key: string]: Array<IRoute>
 }
 
-export const RouteTypesMapContext = createContext<RoutesMapContextType>({});
+export const RouteClassesMapContext = createContext<RouteClassesMapContextType>({});
 
 export default function App({ Component, pageProps }: AppProps) {
-  const [routeTypesMap, setRouteTypesMap] = useState<RoutesMapContextType>({});
+  const [routeClassesMap, setRouteClassesMap] = useState<RouteClassesMapContextType>({});
 
   useEffect(() => {
-    const populateRoutesMap = async () => {
+    const populateRouteClassesMap = async () => {
       const routesResponse = await fetch('api/routes/routes');
       const routesData = await routesResponse.json();
 
-      const map: RoutesMapContextType = {};
+      const map: RouteClassesMapContextType = {};
 
       for (const route of routesData.data) {
         const routeClass = route.attributes.fare_class;
@@ -37,16 +37,16 @@ export default function App({ Component, pageProps }: AppProps) {
             map[`${routeClass}`] = [route];
         }
       }
-      setRouteTypesMap(map);
+      setRouteClassesMap(map);
     }
-    populateRoutesMap();
+    populateRouteClassesMap();
   }, []);
 
   return (
     <main className={roboto.className}>
-      <RouteTypesMapContext.Provider value={routeTypesMap}>
+      <RouteClassesMapContext.Provider value={routeClassesMap}>
         <Component {...pageProps} />
-      </RouteTypesMapContext.Provider>
+      </RouteClassesMapContext.Provider>
     </main>
-  );
+);
 }

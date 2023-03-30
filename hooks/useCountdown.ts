@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { IPrediction } from '../interfaces/IPredictions';
 
-const useCountdown = (targetPrediction: IPrediction, handleExpiredPrediction: Function) => {
+const useCountdown = (targetPrediction: IPrediction, directionId: number, handleExpiredPrediction: Function) => {
     const countdownDate = new Date(targetPrediction.attributes.departure_time).getTime();
     const [countdown, setCountdown] = useState(countdownDate - Date.now());
 
@@ -10,7 +10,7 @@ const useCountdown = (targetPrediction: IPrediction, handleExpiredPrediction: Fu
             const remainingTime = countdownDate - new Date().getTime();
             if (remainingTime < 1000) {
                 clearInterval(interval);
-                handleExpiredPrediction(targetPrediction.id);
+                handleExpiredPrediction(targetPrediction.id, directionId);
             }
             setCountdown(remainingTime);
         }, 1000);
@@ -27,6 +27,6 @@ const getCountDownValues = (countDown: number) => {
     const minutes = date.getUTCMinutes();
     const seconds = date.getUTCSeconds();
     return [hours, minutes, seconds];
-}
+};
 
 export { useCountdown };

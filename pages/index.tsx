@@ -4,21 +4,24 @@ import React, { useState, useEffect, useContext } from 'react';
 import Dropdown from '../components/Dropdown';
 import { IStops } from '../interfaces/IStops';
 import styles from '../styles/Home.module.css';
-import { RouteTypesMapContext } from './_app';
+import { RouteClassesMapContext } from './_app';
 import { IDropdownOption } from '../interfaces/IDropdownOption';
 
 export default function Home() {
     const router = useRouter();
-    const routeTypesMapContext = useContext(RouteTypesMapContext);
+    const routeClassesMapContext = useContext(RouteClassesMapContext);
+    console.log(routeClassesMapContext);
 
     // routeTypesList = array of route types
-    const [routeTypesList, setRouteTypesList] = useState<Array<IDropdownOption>>([]);
+    const [routeClassesList, setRouteClassesList] = useState<Array<IDropdownOption>>([]);
     // routeType = selected route type
-    const [routeType, setRouteType] = useState<string>();
+    const [routeClass, setRouteClass] = useState<string>();
     // routesList = array of routes for a specific route type
     const [routesList, setRoutesList] = useState<Array<IDropdownOption>>([]);
-    // route = selected route
-    const [route, setRoute] = useState<string>();
+    // route = selected route's id
+    const [routeId, setRouteId] = useState<string>();
+    // routeType = selected route's type number
+    const [routeType, setRouteType] = useState<string>();
     // stopsList = array of stops for a specific route
     const [stopsList, setStopsList] = useState<Array<IDropdownOption>>([]); 
     // category = current category list
@@ -28,32 +31,34 @@ export default function Home() {
     useEffect(() => {
         const routesList: Array<IDropdownOption> = [];
 
-        if (routeTypesMapContext) {
-            for (const key in routeTypesMapContext) {
+        if (routeClassesMapContext) {
+            for (const key in routeClassesMapContext) {
                 const dropdownOption: IDropdownOption = { 'value': key.toLowerCase(), 'label': key };
                 routesList.push(dropdownOption);
             }
         }
 
-        setRouteTypesList(routesList);
-    }, [routeTypesMapContext])
+        setRouteClassesList(routesList);
+    }, [routeClassesMapContext]);
 
-    const handleRouteType = (option: IDropdownOption) => {
+    const handleRouteClass = (option: IDropdownOption) => {
         // Get selected route type and update routesList
         const routesList: Array<IDropdownOption> = [];
-        routeTypesMapContext[option.label].forEach((route) => routesList.push({ 'value': route.id, 'label': route.attributes.long_name }));
+        routeClassesMapContext[option.label].forEach((route) => routesList.push({ 'value': `${route.id}|${route.attributes.type}`, 'label': route.attributes.long_name }));
         setRoutesList(routesList);
-        setRouteType(option.label);
+        setRouteClass(option.label);
         setShowRoutes(true);
-    }
+    };
 
     const handleRoute = async (option: IDropdownOption) => {
         // Get selected route and find associated route id
         const route: IDropdownOption | undefined = routesList.find((route) => route.value === option.value);
         // Retrieve stops for selected route using route id
         if (route !== undefined) {
-            setRoute(route.value);
-            const stopsResponse = await fetch(`/api/stops/${route.value}`);
+            const [routeId, routeType] = route.value.split('|');
+            setRouteId(routeId);
+            setRouteType(routeType);
+            const stopsResponse = await fetch(`/api/stops/${routeId}`);
             const stopsData: IStops = await stopsResponse.json();
             const stopsList: Array<IDropdownOption> = [];
             stopsData.data.forEach((stop) => stopsList.push({ 'value': stop.id, 'label': stop.attributes.name }));
@@ -62,7 +67,7 @@ export default function Home() {
         } else {
             throw Error(`Unable to find selected route: ${option}`);
         }
-    }
+    };
 
     const handleStop = (option: IDropdownOption) => {
         // Get selected stop and navigate user to tracking page with stop id parameter
@@ -70,7 +75,7 @@ export default function Home() {
         if (stop !== undefined) {
             router.push({
                 pathname: `/predictions/${stop.value}`,
-                query: { routeType: routeType, routeId: route }
+                query: { routeId: routeId, routeClass: routeClass, routeType: routeType }
             });
         } else {
             throw Error(`Unable to find seleced stop: ${option}`);
@@ -94,11 +99,11 @@ export default function Home() {
                         </div>
                         <div className={styles['items-body']}>
                             <Dropdown 
-                                placeholder='Select Route Type' 
-                                options={routeTypesList} 
+                                placeholder='Select Route Class' 
+                                options={routeClassesList} 
                                 isMulti={false}
                                 isSearchable={true}
-                                onChange={handleRouteType}
+                                onChange={handleRouteClass}
                                 layer='third'
                             />
                             {showRoutes &&
@@ -126,5 +131,5 @@ export default function Home() {
                 </div>
             </main>
         </>
-    )
+    );
 };

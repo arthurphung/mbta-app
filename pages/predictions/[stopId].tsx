@@ -1,22 +1,20 @@
 import { useRouter } from 'next/router';
-import Schedule from '../../components/Schedule';
+import dynamic from 'next/dynamic';
+import Schedules from '../../components/Schedules';
 
 export default function Tracking() {
     const router = useRouter();
     const stopId = router.query.stopId as string;
-    const routeType = router.query.routeType as string;
     const routeId = router.query.routeId as string;
-    const outboundDirectionId = 0;
-    const inboundDirectionId = 1;
+    const routeClass = router.query.routeClass as string;
+    const routeType = router.query.routeType as string;
+
+    const InteractiveMap = dynamic(() => import('../../components/InteractiveMap'), { ssr: false }); 
 
     return (
-        <div className='centered-page-contents'>
-            <div className='mb-spacing'>
-                <Schedule stopId={stopId} routeType={routeType} routeId={routeId} directionId={inboundDirectionId} />
-            </div>
-            <div>
-                <Schedule stopId={stopId} routeType={routeType} routeId={routeId} directionId={outboundDirectionId} />
-            </div>
-        </div>
+        <>
+            <Schedules stopId={stopId} routeClass={routeClass} routeType={routeType} />
+            <InteractiveMap routeId={routeId} />
+        </>
     );
 };

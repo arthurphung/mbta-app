@@ -4,11 +4,12 @@ import Counter from './Counter';
 
 type countdownProps = {
     prediction: IPrediction,
+    directionId: number,
     handleExpiredPrediction: Function
 }
 
 export default function Countdown(props: countdownProps) {
-    const [hours, minutes, seconds] = useCountdown(props.prediction, props.handleExpiredPrediction);
+    const [hours, minutes, seconds] = useCountdown(props.prediction, props.directionId, props.handleExpiredPrediction);
 
     return (
         <div className='vertical-text-center'>
